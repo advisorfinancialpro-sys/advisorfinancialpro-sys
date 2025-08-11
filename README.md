@@ -713,3 +713,353 @@ export const useAuth = (): AuthContextType => {
 ### ... y así sucesivamente para todos los demás archivos...
 
 *(Nota: El contenido de algunos archivos se ha omitido por brevedad, pero el archivo real los contiene todos).*
+
+
+##Estructura y Código del Proyecto Serconfin
+
+Este documento resume la estructura del proyecto, los componentes clave y las tecnologías utilizadas en el sitio web de Serconfin, desarrollado con Next.js y ShadCN UI.
+
+## 1. Stack Tecnológico
+
+- **Framework**: Next.js (con App Router)
+- **Lenguaje**: TypeScript
+- **Componentes UI**: ShadCN UI
+- **Estilos**: Tailwind CSS
+- **Iconos**: `lucide-react`
+- **Fuentes**: Google Fonts (`Playfair Display` para titulares, `PT Sans` para el cuerpo)
+- **Generación de PDF**: `jspdf`
+- **Autenticación y BD**: Firebase
+
+## 2. Estructura de Carpetas
+
+La organización del proyecto sigue las convenciones modernas de Next.js para facilitar la escalabilidad y el mantenimiento.
+
+```
+/
+├── public/
+│   └── img/              # Imágenes estáticas (logos)
+├── src/
+│   ├── app/              # Contiene las páginas y rutas de la aplicación
+│   │   ├── (paginas)/    # Directorios para cada ruta (e.g., /servicios, /contacto)
+│   │   │   └── page.tsx
+│   │   ├── globals.css   # Estilos globales y variables de tema de Tailwind/ShadCN
+│   │   └── layout.tsx    # Layout principal de la aplicación
+│   ├── components/
+│   │   ├── ui/           # Componentes base de ShadCN (Button, Card, etc.)
+│   │   ├── icons/        # Iconos SVG personalizados (e.g., WhatsApp)
+│   │   └── (Componentes Reutilizables) # Componentes de la aplicación (Header, Footer, Hero, etc.)
+│   ├── hooks/
+│   │   ├── use-auth.tsx # Hook para la gestión de autenticación con Firebase
+│   │   └── use-toast.ts  # Hook para gestionar notificaciones (toasts)
+│   └── lib/
+│       ├── firebase.ts   # Configuración e inicialización de Firebase
+│       ├── generate-brochure.ts # Lógica para generar el PDF del brochure
+│       └── utils.ts      # Utilidades generales (e.g., `cn` para clases de Tailwind)
+├── .env                  # Variables de entorno (credenciales de Firebase)
+├── tailwind.config.ts    # Configuración de Tailwind CSS
+└── next.config.ts        # Configuración de Next.js
+```
+
+## 3. Componentes Principales (Directorio `src/components`)
+
+- **`header.tsx`**: Barra de navegación superior, adaptable para móviles y con estado de login.
+- **`footer.tsx`**: Pie de página con enlaces de navegación, servicios, legales y redes sociales.
+- **`hero.tsx`**: Sección principal de la página de inicio con video de fondo y llamadas a la acción.
+- **`floating-whatsapp.tsx`**: Botón flotante de WhatsApp que aparece en todas las páginas.
+- **`contact.tsx`**: Formulario de contacto con Firestore y canales de comunicación directos.
+- **`testimonials.tsx`**: Carrusel de testimonios de clientes.
+- **`clients.tsx`**: Sección que muestra los clientes que confían en la empresa, usando iconos.
+- **`service-category-slider.tsx`**: Muestra las tres categorías principales de servicios.
+- **`financial-products-slider.tsx`**: Carrusel para los servicios de "Capital de Trabajo".
+- **`outsourcing-slider.tsx`**: Carrusel para los servicios de "Outsourcing Empresarial".
+- **`development-slider.tsx`**: Carrusel para los servicios de "Desarrollo y Automatización".
+
+## 4. Páginas y Rutas (Directorio `src/app`)
+
+- **`/` (`page.tsx`)**: Página de inicio.
+- **`/quienes-somos`**: Información sobre la empresa.
+- **`/servicios`**: Página que presenta las categorías de servicios.
+- **`/servicios/[categoria]`**: Páginas de detalle para cada categoría de servicio.
+- **`/clientes`**: Página de clientes.
+- **`/blog`**: Sección de artículos.
+- **`/contacto`**: Formulario y mapa de contacto.
+- **`/login`, `/register`, `/forgot-password`**: Flujo de autenticación de usuarios.
+- **`/politica-de-privacidad`, `/terminos-y-condiciones`**: Páginas legales.
+
+## 5. Estilos y Tema (Styling)
+
+- **`src/app/globals.css`**: Archivo central para los estilos. Define las variables CSS para el tema oscuro (azul petróleo y dorado).
+- **`tailwind.config.ts`**: Configura Tailwind CSS, incluyendo las fuentes personalizadas.
+
+## 6. Lógica y Funcionalidades Clave
+
+- **Generación de Brochure (`src/lib/generate-brochure.ts`)**: Utiliza `jspdf` para crear un PDF dinámicamente en el cliente.
+- **Autenticación con Firebase**: El `AuthProvider` (`src/hooks/use-auth.tsx`) gestiona el estado del usuario en toda la aplicación.
+- **Formulario de Contacto con Firestore**: El componente `contact.tsx` guarda los mensajes en una colección de Firestore.
+- **Navegación Adaptable**: Componentes `header.tsx` y `Sheet` de ShadCN.
+
+## 7. Código Fuente Clave
+
+---
+### `package.json`
+```json
+{
+  "name": "nextn",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
+    "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "deploy": "npm run build && firebase deploy --only hosting"
+  },
+  "dependencies": {
+    "@genkit-ai/googleai": "^1.14.1",
+    "@genkit-ai/next": "^1.14.1",
+    "@hookform/resolvers": "^4.1.3",
+    "@radix-ui/react-accordion": "^1.2.3",
+    "@radix-ui/react-alert-dialog": "^1.1.6",
+    "@radix-ui/react-avatar": "^1.1.3",
+    "@radix-ui/react-checkbox": "^1.1.4",
+    "@radix-ui/react-collapsible": "^1.1.11",
+    "@radix-ui/react-dialog": "^1.1.6",
+    "@radix-ui/react-dropdown-menu": "^2.1.6",
+    "@radix-ui/react-label": "^2.1.2",
+    "@radix-ui/react-menubar": "^1.1.6",
+    "@radix-ui/react-popover": "^1.1.6",
+    "@radix-ui/react-progress": "^1.1.2",
+    "@radix-ui/react-radio-group": "^1.2.3",
+    "@radix-ui/react-scroll-area": "^1.2.3",
+    "@radix-ui/react-select": "^2.1.6",
+    "@radix-ui/react-separator": "^1.1.2",
+    "@radix-ui/react-slider": "^1.2.3",
+    "@radix-ui/react-slot": "^1.2.3",
+    "@radix-ui/react-switch": "^1.1.3",
+    "@radix-ui/react-tabs": "^1.1.3",
+    "@radix-ui/react-toast": "^1.2.6",
+    "@radix-ui/react-tooltip": "^1.1.8",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "date-fns": "^3.6.0",
+    "dotenv": "^16.5.0",
+    "embla-carousel-autoplay": "^8.1.5",
+    "embla-carousel-react": "^8.6.0",
+    "firebase": "^11.10.0",
+    "genkit": "^1.14.1",
+    "jspdf": "^2.5.1",
+    "lucide-react": "^0.475.0",
+    "next": "15.3.3",
+    "patch-package": "^8.0.0",
+    "react": "^18.3.1",
+    "react-day-picker": "^8.10.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.54.2",
+    "recharts": "^2.15.1",
+    "tailwind-merge": "^3.0.1",
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "genkit-cli": "^1.14.1",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
+```
+
+---
+### `next.config.ts`
+```ts
+import type {NextConfig} from 'next';
+require('dotenv').config({ path: './.env' });
+
+const nextConfig: NextConfig = {
+  output: 'export',
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  images: {
+    unoptimized: true,
+  },
+};
+
+export default nextConfig;
+```
+
+---
+### `src/app/layout.tsx`
+```tsx
+import type { Metadata } from 'next';
+import { Toaster } from "@/components/ui/toaster"
+import './globals.css';
+import { FloatingWhatsApp } from '@/components/floating-whatsapp';
+import { AuthProvider } from '@/hooks/use-auth';
+
+export const metadata: Metadata = {
+  title: 'Serconfin – Servicios financieros, contables y más',
+  description: 'Financiamos y asesoramos tu empresa: leasing, factoring, carta de crédito y más. Simplificamos el acceso al capital y la gestión que tu negocio necesita para crecer.',
+  keywords: 'factoring, leasing, carta de crédito, financiamiento, contabilidad, outsourcing, chile, serconfin',
+  authors: [{ name: 'Serconfin' }],
+  robots: 'index, follow',
+  openGraph: {
+    title: 'Serconfin – Servicios financieros, contables y más',
+    description: 'Soluciones integrales de financiamiento, gestión contable y automatización tecnológica para empresas en Chile.',
+    url: 'https://www.serconfin.com',
+    siteName: 'Serconfin',
+    locale: 'es_CL',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Serconfin – Servicios financieros, contables y más',
+    description: 'Soluciones integrales de financiamiento, gestión contable y automatización tecnológica para empresas en Chile.',
+  },
+  metadataBase: new URL('https://www.serconfin.com'),
+  alternates: {
+    canonical: '/',
+  },
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="es">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400..900&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
+      </head>
+      <body className="font-body antialiased">
+        <AuthProvider>
+          {children}
+          <Toaster />
+          <FloatingWhatsApp />
+        </AuthProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+---
+### `src/app/globals.css`
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 204 43% 10%; /* Dark Petrol Blue */
+    --foreground: 203 17% 96%; /* Light Gray */
+    --card: 204 43% 12%;
+    --card-foreground: 203 17% 96%;
+    --popover: 204 43% 10%;
+    --popover-foreground: 203 17% 96%;
+    --primary: 45 68% 52%; /* Gold */
+    --primary-foreground: 204 43% 10%;
+    --secondary: 204 43% 15%;
+    --secondary-foreground: 203 17% 96%;
+    --muted: 204 43% 15%;
+    --muted-foreground: 204 20% 70%;
+    --accent: 45 68% 52%; /* Gold */
+    --accent-foreground: 204 43% 10%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 204 43% 20%;
+    --input: 204 43% 15%;
+    --ring: 45 68% 52%;
+    --radius: 0.8rem;
+  }
+
+  .dark {
+    --background: 204 43% 10%;
+    --foreground: 203 17% 96%;
+    --card: 204 43% 12%;
+    --card-foreground: 203 17% 96%;
+    --popover: 204 43% 10%;
+    --popover-foreground: 203 17% 96%;
+    --primary: 45 68% 52%;
+    --primary-foreground: 204 43% 10%;
+    --secondary: 204 43% 15%;
+    --secondary-foreground: 203 17% 96%;
+    --muted: 204 43% 15%;
+    --muted-foreground: 204 20% 70%;
+    --accent: 45 68% 52%;
+    --accent-foreground: 204 43% 10%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 204 43% 15%;
+    --input: 204 43% 15%;
+    --ring: 45 68% 52%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+```
+---
+### `src/app/page.tsx`
+```tsx
+import Header from '@/components/header';
+import Hero from '@/components/hero';
+import About from '@/components/about';
+import Testimonials from '@/components/testimonials';
+import Contact from '@/components/contact';
+import Footer from '@/components/footer';
+import ServiceCategorySlider from '@/components/service-category-slider';
+import FinancialProductsSlider from '@/components/financial-products-slider';
+import OutsourcingSlider from '@/components/outsourcing-slider';
+import DevelopmentSlider from '@/components/development-slider';
+
+
+export default function Home() {
+  return (
+    <div className="flex flex-col min-h-screen bg-background">
+      <Header />
+      <main className="flex-grow">
+        <Hero />
+        <ServiceCategorySlider />
+        <FinancialProductsSlider />
+        <OutsourcingSlider />
+        <DevelopmentSlider />
+        <About />
+        <Testimonials />
+        <Contact />
+      </main>
+      <Footer />
+    </div>
+  );
+}
+```
+---
+### `.env`
+```
+NEXT_PUBLIC_FIREBASE_API_KEY="AIzaSyA2pj5fxegKtOj3Nk4V_rdhD29nfU5gDoQ"
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="nubeserpro.firebaseapp.com"
+NEXT_PUBLIC_FIREBASE_PROJECT_ID="nubeserpro"
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="nubeserpro.appspot.com"
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="466519504243"
+NEXT_PUBLIC_FIREBASE_APP_ID="1:466519504243:web:26a141dba28bda64868106"
+GEMINI_API_KEY=""
+```
